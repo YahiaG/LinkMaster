@@ -1,0 +1,198 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h4 class="mb-0">Site Connectivity</h4>
+    </div>
+    <div class="card-body">
+      <!-- Search Form -->
+      <form id="searchForm" class="mb-4">
+        {% csrf_token %}
+        <div class="row g-3 align-items-center">
+          <div class="col-auto">
+            <label for="siteId" class="form-label">Site ID</label>
+            <input
+              type="text"
+              class="form-control"
+              id="siteId"
+              name="site_id"
+              required
+            />
+          </div>
+          <div class="col-auto">
+            <label class="form-label">&nbsp;</label>
+            <button type="submit" class="btn btn-primary d-block">
+              Search
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Tree View -->
+      <div id="treeView" class="mt-4" style="display: none">
+        <h5>Site Connectivity</h5>
+        <div id="siteTree" class="border rounded p-3">
+          <!-- Tree will be populated here -->
+        </div>
+        <div id="affectedSites" class="border rounded p-3">
+          <h5>Affected Sites</h5>
+          <div class="d-flex align-items-center mb-3">
+            <textarea id="affectedSitesString" class="form-control me-2" style="width: 500px; height: 100px; white-space: wrap; resize:none" readonly ></textarea>
+            <button id="copyButton" class="btn btn-outline-secondary">
+              <i class="fas fa-copy"></i> Copy
+            </button>
+          </div>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+
+            });
+          </script>
+
+        </div>
+      </div>
+
+      <!-- Loading Indicator -->
+      <div id="loadingIndicator" class="text-center mt-4" style="display: none">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading site data...</p>
+      </div>
+
+      <!-- Error Message -->
+      <div
+        id="errorMessage"
+        class="alert alert-danger mt-4"
+        style="display: none"
+      ></div>
+    </div>
+  </div>
+</div>
+
+{% block extra_js %}
+<script>
+  (function () {
+    // Guard against double initialization
+    if (window.connectivityInitialized) {
+      return;
+    }
+    window.connectivityInitialized = true;
+
+    function createTreeNode(site) {
+      const node = document.createElement("div");
+      node.className = "tree-node mb-2";
+
+      const content = document.createElement("div");
+      content.className = "d-flex align-items-center p-2 border rounded";
+
+      const expandButton = document.createElement("button");
+      expandButton.className = "btn btn-sm btn-outline-secondary me-2";
+      expandButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
+      expandButton.style.width = "30px";
+
+      const siteInfo = document.createElement("div");
+      siteInfo.className = "flex-grow-1";
+      siteInfo.innerHTML = `
+            <strong>${site.site_id}</strong>
+            <small class="text-muted ms-2">${site.site_name || ""}</small>
+        `;
+
+      content.appendChild(expandButton);
+      content.appendChild(siteInfo);
+      node.appendChild(content);
+
+      if (site.children && site.children.length > 0) {
+        const childrenContainer = document.createElement("div");
+        childrenContainer.className = "tree-children ms-4";
+        childrenContainer.style.display = "none";
+
+        site.children.forEach((child) => {
+          childrenContainer.appendChild(createTreeNode(child));
+        });
+
+        node.appendChild(childrenContainer);
+
+        expandButton.addEventListener("click", () => {
+          const isExpanded = childrenContainer.style.display !== "none";
+          childrenContainer.style.display = isExpanded ? "none" : "block";
+          expandButton.innerHTML = isExpanded
+            ? '<i class="fas fa-chevron-right"></i>'
+            : '<i class="fas fa-chevron-down"></i>';
+        });
+      } else {
+        expandButton.style.visibility = "hidden";
+      }
+
+      return node;
+    }
+
+    function initializeSearchHandler() {
+      const form = document.getElementById("searchForm");
+      const treeView = document.getElementById("treeView");
+      const siteTree = document.getElementById("siteTree");
+      const loadingIndicator = document.getElementById("loadingIndicator");
+      const errorMessage = document.getElementById("errorMessage");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const siteId = document.getElementById("siteId").value.trim();
+        if (!siteId) return;
+
+        // Reset view
+        treeView.style.display = "none";
+        errorMessage.style.display = "none";
+        siteTree.innerHTML = "";
+        loadingIndicator.style.display = "block";
+
+        try {
+          const response = await fetch(
+            `{% url 'get_site_tree' %}?site_id=${encodeURIComponent(siteId)}`
+          );
+          const data = await response.json();
+
+          if (data.error) {
+            throw new Error(data.error);
+          }
+
+          siteTree.appendChild(createTreeNode(data));
+          treeView.style.display = "block";
+          const affectedSitesString = document.getElementById('affectedSitesString');
+          const copyButton = document.getElementById('copyButton');
+
+          // Update the string when affected sites list changes
+          affectedSitesString.value = data.affected_sites.join(', ') + '\nSite, G, L';
+
+
+
+          // Copy to clipboard functionality
+          copyButton.addEventListener('click', function() {
+            affectedSitesString.select();
+            navigator.clipboard.writeText(affectedSitesString.value);
+            
+            // Visual feedback
+            const originalText = copyButton.innerHTML;
+            copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => {
+              copyButton.innerHTML = originalText;
+            }, 2000);
+          });
+
+        } catch (error) {
+          errorMessage.textContent = error.message || "Error loading site data";
+          errorMessage.style.display = "block";
+        } finally {
+          loadingIndicator.style.display = "none";
+        }
+      });
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initializeSearchHandler);
+    } else {
+      initializeSearchHandler();
+    }
+  })();
+</script>
+{% endblock %} {% endblock %}

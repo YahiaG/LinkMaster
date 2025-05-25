@@ -1,0 +1,114 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4">
+  <!-- Search Form -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Search Links</h5>
+      <form method="POST" class="row g-3">
+        {% csrf_token %}
+        <div class="col-md-6">
+          <label for="site_no" class="form-label">Site ID</label>
+          <input
+            type="text"
+            class="form-control"
+            id="site_no"
+            name="site_no"
+            placeholder="Enter Site ID"
+            required
+          />
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Results Table -->
+  {% if links %}
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Search Results</h5>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>Site B</th>
+              <th>Site A</th>
+              <th>Supplier</th>
+              <th>Transmission Type</th>
+              <th>Band</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for link in links %}
+            <tr
+              style="cursor: pointer"
+              onclick="window.location='{% url 'details' link.id %}'"
+              class="link-row {% if 'Dismantled' in link.activity or 'Canceled' in link.activity %}dismantled-link{% endif %}"
+            >
+              <td>{{ link.site_name_b_end }} <b>({{ link.site_no_b_end }})</b></td>
+              <td>{{ link.site_name_a_end }} <b>({{ link.site_no_a_end }})</b></td>
+              <td>{{ link.link_supplier }}</td>
+              <td>{{ link.transmission_type }}</td>
+              <td>{{ link.band }}</td>
+              <td>
+                <span
+                  class="badge {% if link.activity == 'Active' %}bg-success{% elif link.activity == 'Planned' %}bg-danger{% else %}bg-secondary{% endif %}"
+                >
+                  {{ link.activity }}
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="text-center mt-3">
+        <button id="toggleDismantled" class="btn btn-outline-secondary">
+          Show Dismantled Links
+        </button>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="alert alert-info">
+    No links found. Please try a different Site ID.
+  </div>
+  {% endif %}
+</div>
+
+{% block extra_css %}
+<style>
+  .table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+  }
+  .dismantled-link {
+    display: none;
+  }
+</style>
+{% endblock %} {% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggleButton = document.getElementById("toggleDismantled");
+    const dismantledLinks = document.querySelectorAll(".dismantled-link");
+    let showingDismantled = false;
+
+    // Check if there are any dismantled links
+    if (dismantledLinks.length === 0) {
+      toggleButton.style.display = "none";
+    }
+
+    toggleButton.addEventListener("click", function () {
+      showingDismantled = !showingDismantled;
+      dismantledLinks.forEach((link) => {
+        link.style.display = showingDismantled ? "table-row" : "none";
+      });
+      toggleButton.textContent = showingDismantled
+        ? "Hide Dismantled Links"
+        : "Show Dismantled Links";
+    });
+  });
+</script>
+{% endblock %} {% endblock %}

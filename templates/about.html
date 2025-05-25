@@ -1,0 +1,141 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h4 class="mb-0">About LinkMaster</h4>
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">Overview</h5>
+      <p class="card-text">
+        LinkMaster is a comprehensive solution designed to manage and monitor
+        microwave links in the network. This system provides powerful tools for
+        tracking link configurations, connectivity, and maintenance status.
+      </p>
+
+      <h5 class="card-title mt-4">Developer</h5>
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <i class="fas fa-user-circle fa-3x me-3 text-primary"></i>
+            <div>
+              <h6 class="mb-1">Yahia Elgamily</h6>
+              <p class="text-muted mb-0">
+                Transmission Technical Support & Backend Developer
+              </p>
+            </div>
+          </div>
+          <p class="card-text">
+            LinkMaster was developed by Yahia Elgamily, who brings a unique
+            combination of expertise as a Transmission Technical Support
+            specialist at Ericsson and a freelance Backend Developer. With
+            hands-on experience in both transmission systems and software
+            development, this project combines practical field knowledge with
+            modern web development practices.
+          </p>
+          <p class="card-text">
+            As a Transmission Technical Support specialist, Yahia has deep
+            understanding of microwave links and network infrastructure, which
+            has been instrumental in creating a system that truly meets the
+            needs of transmission engineers. His experience as a freelance
+            Backend Developer ensures the system is built with robust, scalable,
+            and maintainable code using Python and Django.
+          </p>
+          <div class="mt-3">
+            <span class="badge bg-primary me-2"
+              ><i class="fas fa-building me-1"></i> Ericsson</span
+            >
+            <span class="badge bg-secondary me-2"
+              ><i class="fas fa-code me-1"></i> Backend Development</span
+            >
+            <span class="badge bg-info me-2"
+              ><i class="fas fa-network-wired me-1"></i> Transmission
+              Systems</span
+            >
+          </div>
+          <div class="mt-3">
+            <a
+              href="https://www.linkedin.com/in/yahia-elgamily-0b74b2189/"
+              target="_blank"
+              class="btn btn-outline-primary me-2"
+            >
+              <i class="fab fa-linkedin me-1"></i> LinkedIn
+            </a>
+            <a
+              href="https://github.com/YahiaG"
+              target="_blank"
+              class="btn btn-outline-dark"
+            >
+              <i class="fab fa-github me-1"></i> GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <h5 class="card-title mt-4">Key Features</h5>
+      <ul class="list-group list-group-flush mb-4">
+        <li class="list-group-item">
+          <i class="fas fa-search me-2"></i>
+          <strong>Link Search:</strong> Quickly find and view detailed
+          information about specific links
+        </li>
+        <li class="list-group-item">
+          <i class="fas fa-project-diagram me-2"></i>
+          <strong>Connectivity View:</strong> Visualize site connectivity and
+          relationships
+        </li>
+        <li class="list-group-item">
+          <i class="fas fa-database me-2"></i>
+          <strong>Database Management:</strong> Easy updates and maintenance of
+          link information
+        </li>
+        <li class="list-group-item">
+          <i class="fas fa-file-excel me-2"></i>
+          <strong>Excel Integration:</strong> Import and export link data using
+          Excel files
+        </li>
+      </ul>
+
+      <h5 class="card-title mt-4">Technical Details</h5>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card mb-3">
+            <div class="card-body">
+              <h6 class="card-subtitle mb-2 text-muted">Frontend</h6>
+              <ul class="list-unstyled">
+                <li><i class="fab fa-html5 me-2"></i>HTML5</li>
+                <li>
+                  <i class="fab fa-css3-alt me-2"></i>CSS3 with Bootstrap 5
+                </li>
+                <li><i class="fab fa-js me-2"></i>JavaScript</li>
+                <li>
+                  <i class="fab fa-font-awesome me-2"></i>Font Awesome Icons
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card mb-3">
+            <div class="card-body">
+              <h6 class="card-subtitle mb-2 text-muted">Backend</h6>
+              <ul class="list-unstyled">
+                <li><i class="fab fa-python me-2"></i>Python</li>
+                <li><i class="fab fa-django me-2"></i>Django Framework</li>
+                <li><i class="fas fa-database me-2"></i>SQLite Database</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <h5 class="card-title">Contact</h5>
+        <p class="card-text">
+          For support or inquiries about LinkMaster, please contact the system
+          administrator.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
